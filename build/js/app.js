@@ -4,23 +4,29 @@ exports.apiKey="6b4c0b9e479346ef69c9abee7864545d";
 },{}],2:[function(require,module,exports){
 var apiKey = require('./../.env').apiKey;
 
-function Doctor(issue, location, gender){
+function Doctor(name, issue, location, gender){
   if(issue == "undefined"){
     this.Issue = null;
   } else if(location == "undefined"){
     this.Location = null;
+  } else if(name == "undefined"){
+    this.Name = null;
   } else{
   this.Issue = issue;
   this.Location = location;
   this.Gender = gender;
+  this.Name = name;
   }
 }
 
-Doctor.prototype.searchDoctor = function (issue, location, specialtyUid, currentLocation, gender, displayInfo, displayRest) {
+Doctor.prototype.searchDoctor = function (name, issue, location, specialtyUid, currentLocation, gender, displayInfo, displayRest, displayError) {
+  var stringName = "name=";
   var stringIssue = "query=";
   var stringLoc = "&location=";
   var stringSpecUid = "&specialty_uid="
-  if(issue === ""){
+  if(name === ""){
+    stringName = "";
+  } if(issue === ""){
     stringIssue = "";
   } if(location === ""){
     stringLoc = "";
@@ -28,7 +34,7 @@ Doctor.prototype.searchDoctor = function (issue, location, specialtyUid, current
     stringSpecUid = "";
   }
 
-  $.get("https://api.betterdoctor.com/2016-03-01/doctors?" + stringIssue + issue + stringSpecUid + specialtyUid + stringLoc + location + "&user_location=" + currentLocation + "&gender=" + gender + "&skip=0&limit=20&user_key=" + apiKey)
+  $.get("https://api.betterdoctor.com/2016-03-01/doctors?" + stringName + name + stringIssue + issue + stringSpecUid + specialtyUid + stringLoc + location + "&user_location=" + currentLocation + "&gender=" + gender + "&skip=0&limit=20&user_key=" + apiKey)
   .then(function(response){
     var info = response.data;
     info.forEach(function(element){
@@ -40,20 +46,56 @@ Doctor.prototype.searchDoctor = function (issue, location, specialtyUid, current
     });
   })
   .fail(function(error){
-    console.log("At least one of the request parameters 'medical issue', 'location' needs to be provided. Error Code: " + error);
-
+    displayError();
   });
 };
 
-Doctor.prototype.getSpecialties = function(){
-  $.get("https://api.betterdoctor.com/2016-03-01/specialties?user_key=" + apiKey)
+function Doctor(name, issue, location, gender){
+  if(issue == "undefined"){
+    this.Issue = null;
+  } else if(location == "undefined"){
+    this.Location = null;
+  } else if(name == "undefined"){
+    this.Name = null;
+  } else{
+  this.Issue = issue;
+  this.Location = location;
+  this.Gender = gender;
+  this.Name = name;
+  }
+}
+
+Doctor.prototype.displayMarkers = function (name, issue, location, specialtyUid, currentLocation, gender, getLocation, displayError) {
+  var stringName = "name=";
+  var stringIssue = "query=";
+  var stringLoc = "&location=";
+  var stringSpecUid = "&specialty_uid="
+  if(name === ""){
+    stringName = "";
+  } if(issue === ""){
+    stringIssue = "";
+  } if(location === ""){
+    stringLoc = "";
+  } if(specialtyUid ===""){
+    stringSpecUid = "";
+  }
+
+  $.get("https://api.betterdoctor.com/2016-03-01/doctors?" + stringName + name + stringIssue + issue + stringSpecUid + specialtyUid + stringLoc + location + "&user_location=" + currentLocation + "&gender=" + gender + "&skip=0&limit=20&user_key=" + apiKey)
   .then(function(response){
-    console.log(response.data);
+    var info = response.data;
+    info.forEach(function(element){
+      if(typeof element.practices !== "undefined"){
+        getLocation(element.practices[0]);
+      } else{
+        console.log("Some of the Doctors don't provide an address");;
+      }
+    });
   })
   .fail(function(error){
-    console.log("error");
+    displayError();
   });
 };
+
 
 exports.doctorModule = Doctor;
 
@@ -71,7 +113,7 @@ Specialties.prototype.getSpecialties = function(displaySpecialties){
     });
   })
   .fail(function(error){
-    console.log("error");
+    console.log(error);
   });
 };
 
@@ -81,7 +123,6 @@ exports.specialtiesModule=Specialties;
 var Specialties = require('./../js/specialties.js').specialtiesModule;
 
 function displaySpecialties(data){
-  console.log(data);
   $("#specialty").append(
     "<option value=" + data.uid + ">" + data.name + "</option>"
     // "<option value>" + data.name +"</option>"
@@ -151,16 +192,22 @@ function displayRest(educations, profile){
   }
 }
 
+function displayError(){
+  $("#display").text("Doctors not found.")
+}
+
+
 
 $(document).ready(function(){
   $("#search-form").submit(function(event){
     event.preventDefault();
     $("#display").empty();
+    var name = $("#name").val();
     var medIssue = $("#medical-issue").val();
     var location = $("#location").val();
     var gender = $("#gender").val();
     var specialty = $("#specialty").val();
-    var Doctors = new Doctor(medIssue, location, gender);
+    var Doctors = new Doctor(name, medIssue, location, gender);
 
     var options = {
       enableHighAccuracy: true,
@@ -173,7 +220,7 @@ $(document).ready(function(){
       var longitude = pos.coords.longitude;
       var currentLocation = latitude + "," + longitude;
 
-      Doctors.searchDoctor(Doctors.Issue, Doctors.Location, specialty, currentLocation, Doctors.Gender, displayInfo, displayRest);
+      Doctors.searchDoctor(Doctors.Name, Doctors.Issue, Doctors.Location, specialty, currentLocation, Doctors.Gender, displayInfo, displayRest, displayError);
     }
 
     function error(err) {

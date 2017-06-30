@@ -1,22 +1,28 @@
 var apiKey = require('./../.env').apiKey;
 
-function Doctor(issue, location, gender){
+function Doctor(name, issue, location, gender){
   if(issue == "undefined"){
     this.Issue = null;
   } else if(location == "undefined"){
     this.Location = null;
+  } else if(name == "undefined"){
+    this.Name = null;
   } else{
   this.Issue = issue;
   this.Location = location;
   this.Gender = gender;
+  this.Name = name;
   }
 }
 
-Doctor.prototype.searchDoctor = function (issue, location, specialtyUid, currentLocation, gender, displayInfo, displayRest) {
+Doctor.prototype.searchDoctor = function (name, issue, location, specialtyUid, currentLocation, gender, displayInfo, displayRest, displayError) {
+  var stringName = "name=";
   var stringIssue = "query=";
   var stringLoc = "&location=";
   var stringSpecUid = "&specialty_uid="
-  if(issue === ""){
+  if(name === ""){
+    stringName = "";
+  } if(issue === ""){
     stringIssue = "";
   } if(location === ""){
     stringLoc = "";
@@ -24,7 +30,7 @@ Doctor.prototype.searchDoctor = function (issue, location, specialtyUid, current
     stringSpecUid = "";
   }
 
-  $.get("https://api.betterdoctor.com/2016-03-01/doctors?" + stringIssue + issue + stringSpecUid + specialtyUid + stringLoc + location + "&user_location=" + currentLocation + "&gender=" + gender + "&skip=0&limit=20&user_key=" + apiKey)
+  $.get("https://api.betterdoctor.com/2016-03-01/doctors?" + stringName + name + stringIssue + issue + stringSpecUid + specialtyUid + stringLoc + location + "&user_location=" + currentLocation + "&gender=" + gender + "&skip=0&limit=20&user_key=" + apiKey)
   .then(function(response){
     var info = response.data;
     info.forEach(function(element){
@@ -36,19 +42,55 @@ Doctor.prototype.searchDoctor = function (issue, location, specialtyUid, current
     });
   })
   .fail(function(error){
-    console.log("At least one of the request parameters 'medical issue', 'location' needs to be provided. Error Code: " + error);
-
+    displayError();
   });
 };
 
-Doctor.prototype.getSpecialties = function(){
-  $.get("https://api.betterdoctor.com/2016-03-01/specialties?user_key=" + apiKey)
+function Doctor(name, issue, location, gender){
+  if(issue == "undefined"){
+    this.Issue = null;
+  } else if(location == "undefined"){
+    this.Location = null;
+  } else if(name == "undefined"){
+    this.Name = null;
+  } else{
+  this.Issue = issue;
+  this.Location = location;
+  this.Gender = gender;
+  this.Name = name;
+  }
+}
+
+Doctor.prototype.displayMarkers = function (name, issue, location, specialtyUid, currentLocation, gender, getLocation, displayError) {
+  var stringName = "name=";
+  var stringIssue = "query=";
+  var stringLoc = "&location=";
+  var stringSpecUid = "&specialty_uid="
+  if(name === ""){
+    stringName = "";
+  } if(issue === ""){
+    stringIssue = "";
+  } if(location === ""){
+    stringLoc = "";
+  } if(specialtyUid ===""){
+    stringSpecUid = "";
+  }
+
+  $.get("https://api.betterdoctor.com/2016-03-01/doctors?" + stringName + name + stringIssue + issue + stringSpecUid + specialtyUid + stringLoc + location + "&user_location=" + currentLocation + "&gender=" + gender + "&skip=0&limit=20&user_key=" + apiKey)
   .then(function(response){
-    console.log(response.data);
+    var info = response.data;
+    info.forEach(function(element){
+      if(typeof element.practices !== "undefined"){
+        getLocation(element.practices[0]);
+      } else{
+        console.log("Some of the Doctors don't provide an address");;
+      }
+    });
   })
   .fail(function(error){
-    console.log("error");
+    displayError();
   });
 };
+
 
 exports.doctorModule = Doctor;

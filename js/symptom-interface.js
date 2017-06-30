@@ -55,16 +55,22 @@ function displayRest(educations, profile){
   }
 }
 
+function displayError(){
+  $("#display").text("Doctors not found.")
+}
+
+
 
 $(document).ready(function(){
   $("#search-form").submit(function(event){
     event.preventDefault();
     $("#display").empty();
+    var name = $("#name").val();
     var medIssue = $("#medical-issue").val();
     var location = $("#location").val();
     var gender = $("#gender").val();
     var specialty = $("#specialty").val();
-    var Doctors = new Doctor(medIssue, location, gender);
+    var Doctors = new Doctor(name, medIssue, location, gender);
 
     var options = {
       enableHighAccuracy: true,
@@ -77,7 +83,7 @@ $(document).ready(function(){
       var longitude = pos.coords.longitude;
       var currentLocation = latitude + "," + longitude;
 
-      Doctors.searchDoctor(Doctors.Issue, Doctors.Location, specialty, currentLocation, Doctors.Gender, displayInfo, displayRest);
+      Doctors.searchDoctor(Doctors.Name, Doctors.Issue, Doctors.Location, specialty, currentLocation, Doctors.Gender, displayInfo, displayRest, displayError);
     }
 
     function error(err) {

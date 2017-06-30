@@ -11,7 +11,7 @@ Specialties.prototype.getSpecialties = function(displaySpecialties){
     });
   })
   .fail(function(error){
-    console.log("error");
+    console.log(error);
   });
 };
 
