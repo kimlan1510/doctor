@@ -9,24 +9,34 @@ function Doctor(issue, location, gender){
   this.Issue = issue;
   this.Location = location;
   this.Gender = gender;
-};
+  }
+}
 
-Doctor.prototype.searchDoctor(issue, location, currentLocation,  gender) {
+Doctor.prototype.searchDoctor = function (issue, location, currentLocation, gender, displayInfo, displayRest) {
   var stringIssue = "query=";
   var stringLoc = "&location=";
-  if(issue == ""){
+  if(issue === ""){
     stringIssue = "";
-  } if(location == ""){
+  } if(location === ""){
     stringLoc = "";
   }
 
   $.get("https://api.betterdoctor.com/2016-03-01/doctors?" + stringIssue + issue + stringLoc + location + "&user_location=" + currentLocation + "&gender=" + gender + "&skip=0&limit=20&user_key=" + apiKey)
   .then(function(response){
-    console.log(JSON.stringify(response));
-  });
+    var info = response.data;
+    console.log(info);
+    info.forEach(function(element){
+      if(typeof element.practices !== "undefined"){
+        displayInfo(element.practices[0], element.educations, element.profile );
+      } else{
+        displayRest(element.educations, element.profile);
+      }
+    });
+  })
   .fail(function(error){
     console.log("At least one of the request parameters 'medical issue', 'location' needs to be provided. Error Code: " + error);
-  })
+
+  });
 };
 
 exports.doctorModule = Doctor;
