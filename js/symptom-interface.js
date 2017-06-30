@@ -63,6 +63,7 @@ $(document).ready(function(){
     var medIssue = $("#medical-issue").val();
     var location = $("#location").val();
     var gender = $("#gender").val();
+    var specialty = $("#specialty").val();
     var Doctors = new Doctor(medIssue, location, gender);
 
     var options = {
@@ -76,7 +77,7 @@ $(document).ready(function(){
       var longitude = pos.coords.longitude;
       var currentLocation = latitude + "," + longitude;
 
-      Doctors.searchDoctor(Doctors.Issue, Doctors.Location, currentLocation, Doctors.Gender, displayInfo, displayRest);
+      Doctors.searchDoctor(Doctors.Issue, Doctors.Location, specialty, currentLocation, Doctors.Gender, displayInfo, displayRest);
     }
 
     function error(err) {

@@ -16,19 +16,21 @@ function Doctor(issue, location, gender){
   }
 }
 
-Doctor.prototype.searchDoctor = function (issue, location, currentLocation, gender, displayInfo, displayRest) {
+Doctor.prototype.searchDoctor = function (issue, location, specialtyUid, currentLocation, gender, displayInfo, displayRest) {
   var stringIssue = "query=";
   var stringLoc = "&location=";
+  var stringSpecUid = "&specialty_uid="
   if(issue === ""){
     stringIssue = "";
   } if(location === ""){
     stringLoc = "";
+  } if(specialtyUid ===""){
+    stringSpecUid = "";
   }
 
-  $.get("https://api.betterdoctor.com/2016-03-01/doctors?" + stringIssue + issue + stringLoc + location + "&user_location=" + currentLocation + "&gender=" + gender + "&skip=0&limit=20&user_key=" + apiKey)
+  $.get("https://api.betterdoctor.com/2016-03-01/doctors?" + stringIssue + issue + stringSpecUid + specialtyUid + stringLoc + location + "&user_location=" + currentLocation + "&gender=" + gender + "&skip=0&limit=20&user_key=" + apiKey)
   .then(function(response){
     var info = response.data;
-    console.log(info);
     info.forEach(function(element){
       if(typeof element.practices !== "undefined"){
         displayInfo(element.practices[0], element.educations, element.profile );
@@ -43,9 +45,55 @@ Doctor.prototype.searchDoctor = function (issue, location, currentLocation, gend
   });
 };
 
+Doctor.prototype.getSpecialties = function(){
+  $.get("https://api.betterdoctor.com/2016-03-01/specialties?user_key=" + apiKey)
+  .then(function(response){
+    console.log(response.data);
+  })
+  .fail(function(error){
+    console.log("error");
+  });
+};
+
 exports.doctorModule = Doctor;
 
 },{"./../.env":1}],3:[function(require,module,exports){
+var apiKey = require('./../.env').apiKey;
+
+function Specialties(){}
+
+Specialties.prototype.getSpecialties = function(displaySpecialties){
+  $.get("https://api.betterdoctor.com/2016-03-01/specialties?user_key=" + apiKey)
+  .then(function(response){
+    var data = response.data;
+    data.forEach(function(element){
+      displaySpecialties(element);
+    });
+  })
+  .fail(function(error){
+    console.log("error");
+  });
+};
+
+exports.specialtiesModule=Specialties;
+
+},{"./../.env":1}],4:[function(require,module,exports){
+var Specialties = require('./../js/specialties.js').specialtiesModule;
+
+function displaySpecialties(data){
+  console.log(data);
+  $("#specialty").append(
+    "<option value=" + data.uid + ">" + data.name + "</option>"
+    // "<option value>" + data.name +"</option>"
+  );
+
+}
+$(document).ready(function(){
+    var specialtiesOption = new Specialties();
+    specialtiesOption.getSpecialties(displaySpecialties);
+
+});
+
 var Doctor = require('./../js/backend.js').doctorModule;
 
 function displayInfo(address, educations, profile){
@@ -111,6 +159,7 @@ $(document).ready(function(){
     var medIssue = $("#medical-issue").val();
     var location = $("#location").val();
     var gender = $("#gender").val();
+    var specialty = $("#specialty").val();
     var Doctors = new Doctor(medIssue, location, gender);
 
     var options = {
@@ -124,7 +173,7 @@ $(document).ready(function(){
       var longitude = pos.coords.longitude;
       var currentLocation = latitude + "," + longitude;
 
-      Doctors.searchDoctor(Doctors.Issue, Doctors.Location, currentLocation, Doctors.Gender, displayInfo, displayRest);
+      Doctors.searchDoctor(Doctors.Issue, Doctors.Location, specialty, currentLocation, Doctors.Gender, displayInfo, displayRest);
     }
 
     function error(err) {
@@ -136,4 +185,4 @@ $(document).ready(function(){
   });
 });
 
-},{"./../js/backend.js":2}]},{},[3]);
+},{"./../js/backend.js":2,"./../js/specialties.js":3}]},{},[4]);

@@ -9,14 +9,20 @@
   <body>
     <div class="container">
       <h1>The One Place For All Your Medical Needs</h1>
-      <h3>Search for doctors by medical conditoin</h3>
+      <h3>Search for doctors by medical condition</h3>
       <form id="search-form">
+        <label for="specialty">Specialty</label>
+        <select id="specialty">
+          <option value="">All</option>
+        </select>
+        </br>
         <label for="medical-issue">Medical issue</label>
         <input type="text" id="medical-issue" placeholder="eg. neck pain">
         </br>
         <label for="location">Location by city or state or both</label>
         <input type="text" id="location" placeholder="eg. or-portland">
         </br>
+        <label for="">gender</label>
         <select id="gender">
           <option>male</option>
           <option>female</option>
