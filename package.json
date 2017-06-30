@@ -1,0 +1,35 @@
+{
+  "name": "doctor",
+  "version": "1.0.0",
+  "main": "gulpfile.js",
+  "dependencies": {},
+  "devDependencies": {
+    "bower-files": "^4.0.0",
+    "browser-sync": "^2.18.12",
+    "browserify": "^14.4.0",
+    "del": "^3.0.0",
+    "gulp": "^3.9.1",
+    "gulp-concat": "^2.6.1",
+    "gulp-jshint": "^2.0.4",
+    "gulp-sass": "^3.1.0",
+    "gulp-sourcemaps": "^2.6.0",
+    "gulp-uglify": "^3.0.0",
+    "jshint": "^2.9.5",
+    "util": "^0.10.3",
+    "vinyl-source-stream": "^1.1.0"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/kimlan1510/redesigned-guacamole.git"
+  },
+  "bugs": {
+    "url": "https://github.com/kimlan1510/redesigned-guacamole/issues"
+  },
+  "homepage": "https://github.com/kimlan1510/redesigned-guacamole#readme",
+  "description": ""
+}

@@ -1,0 +1,35 @@
+<html>
+  <head>
+    <link rel="stylesheet" href="build/css/vendor.css">
+    <link rel="stylesheet" href="build/css/styles.css">
+    <script src="build/js/vendor.min.js"></script>
+    <script type="text/javascript" src="build/js/app.js"></script>
+    <title>Bike Index</title>
+  </head>
+  <body>
+    <div class="container">
+      <h1>Bike Index</h1>
+      <h3>Fill in the form below</h3>
+      <form id="search-form">
+        <input type="text" id="manufacturer" placeholder="manufacturer">
+        </br>
+        <input type="text" id="color" placeholder="color">
+        </br>
+        <input type="text" id="location" placeholder="location">
+        </br>
+        <input type="text" id="distance" placeholder="distance">
+        </br>
+        <select id="stolenness">
+          <option>all</option>
+          <option>stolen</option>
+          <option>non</option>
+          <option>proximity</option>
+        </select>
+        </br>
+        <button type="submit" name="button">got it</button>
+      </form>
+
+      <ul id="display"></ul>
+    </div>
+  </body>
+</html>
